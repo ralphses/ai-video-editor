@@ -52,7 +52,7 @@ public class StageSwitcher {
     }
 
     public static void toWelcomePage(ActionEvent event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(AiVideoEditorApp.class.getResource("welcome.fxml"));
-        StageSwitcher.toPage(fxmlLoader, event, 900, 600, "Welcome Page");
+        FXMLLoader fxmlLoader = new FXMLLoader(AiVideoEditorApp.class.getResource("main.fxml"));
+        StageSwitcher.toPage(fxmlLoader, event, 500, 300, "Welcome Page");
     }
 }

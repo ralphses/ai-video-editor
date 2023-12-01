@@ -1,12 +1,17 @@
 package com.clicks.aivideoeditor.controller;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import static java.lang.String.format;
 
@@ -28,6 +33,65 @@ public class Controller {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         return directoryChooser.showDialog(stage);
+    }
+
+    protected void saveToDirectory(String videoFilePath, String outputDirectory) {
+
+        File videoFile = new File(videoFilePath);
+        File outputDir = new File(outputDirectory);
+
+        // Create the output directory if it doesn't exist
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        // Prepare the output file path
+        String outputFilePath = outputDirectory + File.separator + videoFile.getName();
+
+        try {
+            // Copy the video file to the output directory
+            Files.copy(videoFile.toPath(), new File(outputFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Video file saved to: " + outputFilePath);
+        } catch (IOException e) {
+            System.err.println("Error saving video file: " + e.getMessage());
+        }
+    }
+
+    protected void handlePreview(Event event) {
+        if (tempFile != null) {
+            //check if VLC player is installed
+            String vlcPath = isVlcInstalled();
+            if (!vlcPath.isEmpty()) {
+                playWithVlc(tempFile, vlcPath);
+            } else playWithWindowsPlayer(tempFile);
+        }
+    }
+
+    private void playWithWindowsPlayer(File tempFile) {
+        try {
+            Desktop.getDesktop().open(tempFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void playWithVlc(File tempFile, String vlcPath) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(vlcPath, tempFile.getAbsolutePath());
+            processBuilder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String isVlcInstalled() {
+        // Check if VLC executable exists
+        String vlcPath1 = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"; // Adjust the path as per your installation
+        String vlcPath2 = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe"; // Adjust the path as per your installation
+        File vlcExecutable = new File(vlcPath1);
+        File vlcExecutable2 = new File(vlcPath2);
+
+        return (vlcExecutable.exists()) ? vlcPath1 : (vlcExecutable2.exists()) ? vlcPath2 : "";
     }
 
     protected File browseFile(Stage stage) {

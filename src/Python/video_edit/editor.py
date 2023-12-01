@@ -45,7 +45,7 @@ if __name__ == "__main__":
     elif operation == "trim_video":
         input_file, output_file, start_time, end_time = sys.argv[2], sys.argv[3], float(sys.argv[4]), float(sys.argv[5])
         trim_video(input_file, output_file, start_time, end_time)
-        result = "Trimmed video successfully."
+        result = start_time
 
     elif operation == "replace_audio":
         input_video, input_audio, output_file = sys.argv[2], sys.argv[3], sys.argv[4]

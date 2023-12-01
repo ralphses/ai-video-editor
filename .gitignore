@@ -23,6 +23,7 @@ target/
 
 ### NetBeans ###
 /nbproject/private/
+/src/main/resources/config.properties
 /nbbuild/
 /dist/
 /nbdist/
