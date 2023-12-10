@@ -30,6 +30,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,9 +45,11 @@ public class MainController extends Controller {
     public static final String CONFIG_FILE = "config.properties";
     public Button submitBtn;
     @FXML
-    private Button cancelBtn;
-    @FXML
     private ProgressIndicator progress;
+
+    @FXML
+    private Label status;
+
     @FXML
     private AnchorPane container;
 
@@ -57,20 +60,16 @@ public class MainController extends Controller {
     private TextArea queryBox;
 
     @FXML
-    private Button resetBtn;
-
-    @FXML
-    private Button selectVideoBtn;
-
-
-    @FXML
     void cancel(ActionEvent event) {
 
     }
 
     @FXML
     void reset(ActionEvent event) {
-
+        queryBox.setText("");
+        status.setText("status: ");
+        submitBtn.setDisable(false);
+        hideLoader();
     }
 
     @FXML
@@ -86,38 +85,13 @@ public class MainController extends Controller {
         progress.setVisible(false);
     }
 
-    @FXML
-    void submit_on(ActionEvent event) {
-
-
-        String query = queryBox.getText().trim();
-
-        if (!query.isEmpty()) {
-
-            showLoader();
-
-            //Todo: process query to get intent
-            String intent = getQueryIntent(query);
-
-            //Todo: call intent function pass query
-            callAction(intent, event);
-
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
-            delay.setOnFinished(e -> {
-                // Your logic after the actions are complete...
-                hideLoader();
-            });
-            delay.play();
-
-
-        }
-    }
 
     @FXML
     void submit(ActionEvent event) {
         String query = queryBox.getText().trim();
 
         if (!query.isEmpty()) {
+            submitBtn.setDisable(true);
             showLoader();
 
             // Create a background task to process the query and get the intent
@@ -170,11 +144,16 @@ public class MainController extends Controller {
     private void showFileBrowser(ActionEvent event) {
         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
         File file = browseFile(stage);
+
         if (file != null) {
             currentFile = file;
             Controller.tempFile = file;
             setUpVideoFile();
         }
+
+        submitBtn.setDisable(false);
+        status.setText("status: ");
+
     }
 
     private void setUpVideoFile() {
@@ -233,7 +212,18 @@ public class MainController extends Controller {
         }
 
         System.out.println("intent = " + intent.get());
-        return intent.get();
+        String dictectedIntent = intent.get();
+
+        Platform.runLater(() -> {
+            List<String> commands = List.of(PREVIEW, REPLACE_AUDIO, LOAD_VIDEO, ROTATE, TRIM);
+
+            if (!commands.contains(dictectedIntent)) {
+                status.setText(" ".concat("Failed to dictect intent"));
+                submitBtn.setDisable(false);
+            } else status.setText(status.getText().concat(" Dictected intent -> ".concat(dictectedIntent)));
+        });
+
+        return dictectedIntent;
     }
 
     private String extractIntentFromResponse(String responseBody) {

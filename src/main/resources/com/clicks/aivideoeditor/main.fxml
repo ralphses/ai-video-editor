@@ -67,9 +67,9 @@
                   </VBox>
                </children>
             </VBox>
-            <VBox prefHeight="50.0" prefWidth="433.0">
+            <VBox prefHeight="50.0" prefWidth="433.0" spacing="5.0">
                <children>
-                  <HBox alignment="CENTER" prefHeight="36.0" prefWidth="246.0" spacing="5.0">
+                  <HBox alignment="CENTER" prefHeight="36.0" prefWidth="246.0" spacing="10.0">
                      <children>
                         <Button fx:id="submitBtn" mnemonicParsing="false" onAction="#submit" prefHeight="29.0" prefWidth="248.0" text="Subbmit">
                            <font>
@@ -88,7 +88,15 @@
                            </font>
                         </Button>
                      </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </HBox>
+                  <Label fx:id="status" text="Status:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </VBox>
          </children>

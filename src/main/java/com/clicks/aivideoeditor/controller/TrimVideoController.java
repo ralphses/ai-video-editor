@@ -30,12 +30,6 @@ public class TrimVideoController extends Controller implements Initializable {
     private AnchorPane container;
 
     @FXML
-    private Label currentVideoLabel;
-
-    @FXML
-    private Button resetBtn;
-
-    @FXML
     private TextField startTime;
 
     @FXML
